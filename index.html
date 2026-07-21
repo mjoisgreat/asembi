@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="A multi-agent decision engine for consequential choices, featuring a Founder Runway specialization for pre-quit decisions.">
-<title>The AI Diplomat — Multi-Agent Decision Engine</title>
+<meta name="description" content="A private multi-perspective decision review for consequential choices that need more than a quick answer.">
+<meta name="theme-color" content="#171817">
+<title>The AI Diplomat — Decision Review</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=DM+Sans:wght@300..700&amp;display=swap" rel="stylesheet">
@@ -331,6 +332,226 @@ body{background:var(--color-bg);}
 @media (max-width:700px){.header .container{padding-inline:16px;}.app-shell{height:auto;}.decision-rail,.workspace-panel{padding-inline:16px;}.decision-track-picker{grid-template-columns:repeat(2,minmax(0,1fr));}.decision-track{min-height:36px;}.hero-title{font-size:2.45rem;}.track-context{min-height:auto;}.agents-grid{grid-template-columns:1fr;}.decision-canvas,.gate-grid,.evidence-ledger,.brief-grid,.path-options{grid-template-columns:1fr;}.canvas-field.full{grid-column:auto;}.workspace-empty{min-height:270px;padding:42px 0;}.workspace-empty h2{font-size:2.4rem;}.input-footer{align-items:center;}.modal{padding:20px;}.modal-actions{display:grid;grid-template-columns:1fr;}.modal-actions .btn-main{margin-left:0;width:100%;}.modal-actions .btn-secondary{width:100%;}.how-grid{grid-template-columns:1fr;gap:12px;margin-top:20px;}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 </style>
+<style>
+/* DECISION DESK — a single editorial case file, not a dashboard */
+:root{
+  --radius-sm:4px;--radius-md:6px;--radius-lg:8px;--radius-xl:10px;
+  --transition:200ms cubic-bezier(.2,.7,.2,1);
+  --agent-devil:var(--color-primary);--agent-opt:var(--color-primary);--agent-risk:var(--color-primary);--agent-psych:var(--color-primary);--agent-med:var(--color-primary);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --color-bg:#171817;--color-surface:#1f2020;--color-surface-2:#252625;--color-surface-offset:#2d2e2d;--color-surface-dynamic:#2d2e2d;
+  --color-text:#f4f1ea;--color-text-muted:#bebbb3;--color-text-faint:#97948d;--color-border:#41413d;--color-divider:#33342f;
+  --color-primary:#b7c8ff;--color-primary-hover:#d2dcff;--color-primary-active:#95a8df;--color-primary-highlight:rgba(183,200,255,.12);--color-text-inverse:#15203c;
+  --shadow-sm:none;--shadow-md:none;--shadow-lg:none;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --color-bg:#f4f1ea;--color-surface:#fbf9f4;--color-surface-2:#f7f4ed;--color-surface-offset:#ece8df;--color-surface-dynamic:#ece8df;
+  --color-text:#171817;--color-text-muted:#5d5d58;--color-text-faint:#77756e;--color-border:#d2cec4;--color-divider:#dedad0;
+  --color-primary:#2e416d;--color-primary-hover:#203154;--color-primary-active:#172945;--color-primary-highlight:rgba(46,65,109,.1);--color-text-inverse:#fbf9f4;
+  --shadow-sm:none;--shadow-md:none;--shadow-lg:none;
+}
+html,body{height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important;}
+body{background:var(--color-bg);font-size:16px;line-height:1.5;}
+.container,.container--wide{max-width:980px;padding-inline:28px;}
+
+/* Quiet masthead */
+.header{position:relative;background:transparent;backdrop-filter:none;border-bottom:1px solid var(--color-divider);padding:17px 0;}
+.header .container{max-width:1220px;}
+.header-inner{height:auto;min-height:30px;}
+.logo{gap:10px;}
+.logo-icon{width:23px;height:23px;color:var(--color-primary);}
+.logo-text{font-family:var(--font-body);font-size:14px;font-weight:700;letter-spacing:.01em;}
+.logo-text span{color:inherit;font-weight:400;}
+.header-actions{gap:10px;}
+.mode-badge{min-height:30px;padding:5px 9px;border-radius:4px;background:transparent;border-color:var(--color-divider);font-size:12px;font-weight:650;letter-spacing:.02em;}
+.mode-badge.demo,.mode-badge.live{color:var(--color-primary);border-color:color-mix(in oklab,var(--color-primary) 45%,var(--color-divider));}
+.theme-toggle{width:30px;height:30px;border:0;border-radius:4px;background:transparent;color:var(--color-text-muted);}
+.theme-toggle:hover{background:var(--color-surface-offset);color:var(--color-text);}
+
+/* The intake is one deliberate page, not a marketing hero. */
+.app-shell{display:block!important;width:100%!important;height:auto!important;margin:0!important;border:0!important;}
+.decision-rail{display:block;overflow:visible!important;min-height:0!important;padding:74px 0 54px!important;background:transparent!important;border:0!important;text-align:center;}
+.decision-rail>.container{max-width:920px;}
+.hero{padding:0!important;overflow:visible!important;}
+.hero::before{display:none!important;}
+.hero-badge{display:inline-flex;min-height:auto;margin:0 0 18px;padding:0;border:0;border-radius:0;background:transparent;color:var(--color-primary);font-size:12px;font-weight:700;letter-spacing:.12em;line-height:1.35;text-transform:uppercase;}
+.badge-dot{display:none!important;}
+.hero-title{max-width:800px;margin:0 auto 16px;font-family:var(--font-display);font-size:clamp(3.15rem,7vw,5.9rem);font-weight:400;letter-spacing:-.048em;line-height:.91;color:var(--color-text);}
+.hero-title em{color:inherit;font-style:italic;}
+.hero-subtitle{max-width:520px;margin:0 auto 42px;color:var(--color-text-muted);font-size:16px;line-height:1.6;}
+.hero-agents{display:none!important;}
+.input-section{max-width:820px;margin:0 auto;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none!important;text-align:left;}
+.template-label,.input-label{display:block;margin:0 0 9px;color:var(--color-text-muted);font-size:12px;font-weight:700;letter-spacing:.08em;line-height:1.35;text-transform:uppercase;}
+.decision-track-picker{display:flex;align-items:center;gap:0;margin:0 0 17px;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);}
+.decision-track{flex:1;min-height:44px;padding:10px 11px;border:0!important;border-radius:0!important;background:transparent!important;color:var(--color-text-muted);text-align:center;transform:none!important;box-shadow:none!important;}
+.decision-track+.decision-track{border-left:1px solid var(--color-divider)!important;}
+.decision-track:hover,.decision-track.active{background:var(--color-primary-highlight)!important;color:var(--color-text)!important;}
+.decision-track.active{box-shadow:inset 0 -2px 0 var(--color-primary)!important;}
+.decision-track strong{font-size:13px;font-weight:650;line-height:1.2;}
+.decision-track small{display:none!important;}
+.track-context{min-height:0;margin:0 0 21px;color:var(--color-text-faint);font-size:13px;line-height:1.5;}
+.input-area{min-height:144px;padding:18px 19px;border:1px solid var(--color-border);border-radius:7px;background:var(--color-surface);box-shadow:none!important;color:var(--color-text);font-family:var(--font-display);font-size:clamp(1.45rem,2.5vw,1.85rem);font-style:italic;letter-spacing:-.015em;line-height:1.34;resize:vertical;}
+.input-area:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-highlight)!important;}
+.input-area::placeholder{color:var(--color-text-faint);opacity:1;}
+.input-help{margin:9px 0 0;color:var(--color-text-faint);font-size:12px;line-height:1.5;}
+.context-disclosure{margin-top:23px;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);background:transparent;}
+.context-disclosure summary{display:flex;align-items:center;justify-content:space-between;padding:13px 0;color:var(--color-text);font-size:14px;font-weight:650;cursor:pointer;list-style:none;}
+.context-disclosure summary::-webkit-details-marker{display:none;}
+.context-disclosure summary::after{content:'+';order:3;margin-left:10px;color:var(--color-primary);font-size:19px;font-weight:400;line-height:1;}
+.context-disclosure[open] summary::after{content:'−';}
+.context-progress{margin-left:auto;color:var(--color-text-faint);font-size:12px;font-weight:500;}
+.context-content{padding:4px 0 20px;}
+.decision-canvas{gap:15px;margin-top:10px;}
+.canvas-field{gap:6px;}
+.canvas-field label{font-size:12px;font-weight:650;color:var(--color-text-muted);}
+.canvas-field input,.canvas-field select,.key-input{min-height:40px;padding:9px 10px;border:1px solid var(--color-border);border-radius:5px;background:var(--color-surface);color:var(--color-text);font-size:14px;box-shadow:none!important;}
+.canvas-field input:focus,.canvas-field select:focus,.key-input:focus{outline:0;border-color:var(--color-primary);box-shadow:0 0 0 3px var(--color-primary-highlight)!important;}
+.readiness-gate{margin-top:20px;padding:0;border:0;border-radius:0;background:transparent;}
+.gate-head{align-items:baseline;margin-bottom:13px;padding-top:18px;border-top:1px solid var(--color-divider);}
+.gate-head h2{font-family:var(--font-display);font-size:26px;font-weight:400;letter-spacing:-.02em;}
+.gate-status{padding:0;border:0;border-radius:0;background:transparent;color:var(--color-primary);font-size:12px;font-weight:650;}
+.gate-status.caution,.gate-status.ready{border:0;color:var(--color-primary);}
+.gate-grid,.evidence-ledger{gap:0;margin:0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);}
+.gate-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.gate-metric,.ledger-column{padding:13px 14px;border:0;border-radius:0;background:transparent;}
+.gate-metric+.gate-metric,.ledger-column+.ledger-column{border-left:1px solid var(--color-divider);}
+.gate-metric span,.ledger-column h3{font-size:12px;letter-spacing:.04em;text-transform:none;color:var(--color-text-muted);}
+.gate-metric strong{font-size:15px;font-weight:650;}
+.gate-guidance{margin:14px 0;color:var(--color-text-muted);font-size:14px;line-height:1.55;}
+.ledger-column ul{gap:7px;}
+.ledger-column li{font-size:13px;line-height:1.46;}
+.ledger-column li::before{color:var(--color-primary);}
+.input-footer{position:static;z-index:auto;bottom:auto;margin-top:19px;padding:0;border-top:0;background:transparent;gap:16px;}
+.example-menu{position:relative;}
+.example-menu summary{color:var(--color-text-muted);font-size:13px;font-weight:600;cursor:pointer;list-style:none;}
+.example-menu summary::-webkit-details-marker{display:none;}
+.example-menu summary::after{content:' ↗';color:var(--color-primary);}
+.scenario-chips{position:absolute;z-index:4;bottom:calc(100% + 10px);left:0;min-width:198px;padding:8px;border:1px solid var(--color-border);border-radius:6px;background:var(--color-surface);box-shadow:0 10px 26px rgba(0,0,0,.12);}
+.scenario-chip{width:100%;padding:8px 9px;border:0;border-radius:3px;text-align:left;color:var(--color-text-muted);font-size:13px;}
+.scenario-chip:hover{background:var(--color-surface-offset);color:var(--color-text);}
+.btn-main,.btn-secondary{min-height:42px;border-radius:5px;font-size:13px;font-weight:700;letter-spacing:.015em;box-shadow:none!important;transform:none!important;}
+.btn-main{padding:10px 17px;background:var(--color-primary);color:var(--color-text-inverse);}
+.btn-main:hover{background:var(--color-primary-hover);}
+.btn-secondary{padding:9px 13px;border:1px solid var(--color-border);background:transparent;color:var(--color-text);}
+.btn-secondary:hover{border-color:var(--color-primary);background:var(--color-primary-highlight);}
+.safety-details{margin-top:20px;padding-top:13px;border-top:1px solid var(--color-divider);}
+.safety-details summary{font-size:12px;color:var(--color-text-faint);cursor:pointer;}
+.safety-note{margin:9px 0 0;padding:0;border:0;border-radius:0;background:transparent;color:var(--color-text-faint);font-size:12px;line-height:1.55;}
+.status-message{min-height:0;max-width:820px;margin:14px auto 0;padding:0;border:0;border-radius:0;background:transparent;color:var(--color-primary);font-size:13px;text-align:left;}
+.status-message.error{color:#b75656;}
+.track-swap .input-section{animation:desk-reveal 200ms ease both;}
+
+/* The council arrives as one readable chronological record. */
+.workspace-panel{display:none;max-width:920px;min-width:0;min-height:0;overflow:visible!important;margin:0 auto;padding:0 28px 84px;background:transparent;border:0;}
+.workspace-panel.has-activity{display:block;}
+.workspace-empty{display:none!important;}
+.progress-bar{height:1px;margin:0 0 33px;border-radius:0;background:var(--color-divider);}
+.progress-fill{border-radius:0;background:var(--color-primary);transition:width .25s linear;}
+.debate-section{padding:0;}
+.section-label{margin:0 0 14px;color:var(--color-text-muted);font-size:12px;font-weight:700;letter-spacing:.12em;}
+.section-label::after{display:none;}
+.agents-grid{display:block;margin:0;border-top:1px solid var(--color-divider);}
+.agent-panel{position:relative;border:0!important;border-bottom:1px solid var(--color-divider)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible;transition:background var(--transition);}
+.panel-head{min-height:70px;padding:15px 0;border:0;background:transparent;cursor:default;}
+.agent-panel.complete .panel-head{cursor:pointer;}
+.agent-panel.complete .panel-head:hover{background:var(--color-primary-highlight);}
+.agent-avatar{width:33px;height:33px;border:1px solid var(--color-border)!important;border-radius:50%;background:transparent;color:var(--color-primary);font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:.04em;}
+.agent-panel.speaking .agent-avatar{border-color:var(--color-primary)!important;}
+.agent-name{font-size:15px;font-weight:700;}
+.agent-role{margin-top:1px;font-size:13px;color:var(--color-text-muted);}
+.agent-status{font-size:12px;color:var(--color-text-faint);}
+.status-dot{width:5px;height:5px;background:var(--color-text-faint);}
+.agent-panel.speaking .status-dot{background:var(--color-primary);animation:none;}
+.panel-body{display:none;min-height:0;padding:0 0 21px 47px;animation:desk-reveal 220ms ease both;}
+.agent-panel.speaking .panel-body,.agent-panel.expanded .panel-body{display:block;}
+.agent-msg{font-size:15px;line-height:1.7;color:var(--color-text);}
+.agent-msg.empty{color:var(--color-text-faint);font-style:normal;}
+.agent-facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-top:18px;padding:0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);}
+.agent-fact{min-height:66px;padding:11px 12px;border:0;border-radius:0;background:transparent;font-size:12px;line-height:1.45;color:var(--color-text-muted);}
+.agent-fact:nth-child(even){border-left:1px solid var(--color-divider);}
+.agent-fact:nth-child(n+3){border-top:1px solid var(--color-divider);}
+.agent-fact strong{margin-bottom:3px;color:var(--color-text-faint);font-size:11px;letter-spacing:.06em;}
+.round-label{margin:20px 0 10px;color:var(--color-primary);font-size:11px;letter-spacing:.1em;}
+.round-label::before,.round-label::after{background:var(--color-divider);}
+.round-two{padding-top:0;border:0;}
+.typing::after{content:'▍';margin-left:3px;color:var(--color-primary);animation:none;}
+.debate-log{margin:22px 0 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);border-radius:0;background:transparent;}
+.log-head{padding:12px 0;}
+.log-title{font-size:13px;font-weight:650;}
+.log-body{max-height:320px;padding:0 0 14px;}
+.log-entry{padding:10px 0;border-top:1px solid var(--color-divider);}
+.log-av{width:26px;height:26px;border-radius:50%;color:var(--color-primary);font-size:10px;}
+.log-meta,.log-text{font-size:12px;}
+
+/* The final artifact is a brief: clear, calm, and printable in spirit. */
+.mediator-wrap{margin-top:54px;padding:30px 0 0;border:0;border-top:2px solid var(--color-primary);border-radius:0;background:transparent;box-shadow:none!important;animation:desk-reveal 240ms ease both;}
+.med-head{align-items:flex-start;margin-bottom:18px;}
+.med-icon{width:34px;height:34px;border:1px solid var(--color-primary);border-radius:50%;background:transparent;color:var(--color-primary);}
+.med-title{font-family:var(--font-display);font-size:clamp(2.25rem,4vw,3.6rem);font-weight:400;letter-spacing:-.035em;line-height:.98;}
+.med-sub{margin-top:5px;font-size:12px;letter-spacing:.08em;color:var(--color-text-muted);}
+.verdict-summary{max-width:680px;margin-bottom:22px;font-family:var(--font-display);font-size:24px;line-height:1.35;letter-spacing:-.01em;}
+.verdict-list{gap:0;margin:0 0 22px;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);}
+.verdict-item{gap:10px;padding:13px 0;border:0;border-radius:0;background:transparent;font-size:15px;line-height:1.55;}
+.verdict-item+.verdict-item{border-top:1px solid var(--color-divider);}
+.verdict-arrow{color:var(--color-primary);}
+.rec-box{margin:0;padding:16px 18px;border:1px solid color-mix(in oklab,var(--color-primary) 45%,var(--color-border));border-left:3px solid var(--color-primary);border-radius:0;background:var(--color-primary-highlight);color:var(--color-text);font-family:var(--font-display);font-size:22px;font-weight:400;line-height:1.35;}
+.rec-box .rec-box{margin:0;padding:0;border:0;background:transparent;font:inherit;}
+.conf-bar{display:none!important;}
+.verdict-conditions{margin:18px 0 0;color:var(--color-text-muted);font-size:14px;line-height:1.6;}
+.brief-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:26px;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);}
+.brief-card{padding:15px 16px;border:0;border-radius:0;background:transparent;}
+.brief-card+.brief-card{border-left:1px solid var(--color-divider);}
+.brief-card h3{margin-bottom:7px;color:var(--color-text-faint);font-size:11px;letter-spacing:.075em;}
+.brief-card p{font-size:13px;line-height:1.56;}
+.brief-details{margin-top:18px;border-bottom:1px solid var(--color-divider);}
+.brief-details>summary{padding:12px 0;color:var(--color-text-muted);font-size:13px;font-weight:650;cursor:pointer;}
+.council-map{margin:0;padding:0 0 16px;border:0;border-radius:0;background:transparent;}
+.map-head{padding:9px 0;border-top:1px solid var(--color-divider);}
+.map-head h3,.map-head span{font-size:12px;}
+.map-row{padding:10px 0;}
+.path-options{gap:0;margin:0 0 16px;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);}
+.path-card{padding:13px;border:0;border-radius:0;background:transparent;}
+.path-card+.path-card{border-left:1px solid var(--color-divider);}
+.path-card.recommended{border-top:2px solid var(--color-primary);background:var(--color-primary-highlight);}
+.quality-strip{display:none!important;}
+.action-row{margin-top:20px;gap:9px;}
+
+/* Support surfaces are deliberately quiet. */
+.how-section,.footer{display:none!important;}
+.modal-backdrop{background:rgba(16,17,17,.62);backdrop-filter:blur(5px);}
+.modal{max-width:490px;padding:28px;border:1px solid var(--color-border);border-radius:8px;background:var(--color-surface);box-shadow:0 18px 50px rgba(0,0,0,.24);}
+.modal h2{font-family:var(--font-display);font-size:34px;font-weight:400;letter-spacing:-.03em;}
+.modal p{color:var(--color-text-muted);font-size:14px;line-height:1.58;}
+.checkpoint-note{padding:10px 0;border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);background:transparent!important;}
+.modal-actions{gap:9px;margin-top:22px;}
+.assumption-row{gap:8px;}
+.assumption-row button{padding:8px;color:var(--color-text-muted);font-size:12px;}
+
+@keyframes desk-reveal{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media (max-width:700px){
+  .container,.container--wide,.workspace-panel{padding-inline:18px;}
+  .header{padding:14px 0;}.header .container{padding-inline:18px;}
+  .logo-text{font-size:13px;}.mode-badge{font-size:11px;}
+  .decision-rail{padding:46px 0 35px!important;}
+  .hero-title{font-size:clamp(3rem,14vw,4.45rem);line-height:.93;}
+  .hero-subtitle{margin-bottom:30px;font-size:15px;}
+  .decision-track-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .decision-track{min-height:42px;}.decision-track:nth-child(3){border-left:0!important;border-top:1px solid var(--color-divider)!important;}.decision-track:nth-child(4){border-top:1px solid var(--color-divider)!important;}
+  .input-area{min-height:132px;font-size:23px;}
+  .decision-canvas,.gate-grid,.evidence-ledger,.brief-grid,.path-options{grid-template-columns:1fr;}
+  .canvas-field.full{grid-column:auto;}
+  .gate-metric+.gate-metric,.ledger-column+.ledger-column,.brief-card+.brief-card,.path-card+.path-card{border-left:0;border-top:1px solid var(--color-divider);}
+  .agent-facts{grid-template-columns:1fr;}.agent-fact:nth-child(even),.agent-fact:nth-child(n+3){border-left:0;border-top:1px solid var(--color-divider);}
+  .panel-body{padding-left:0;}
+  .input-footer{align-items:stretch;}.example-menu{order:2;}.btn-main{width:100%;justify-content:center;}
+  .scenario-chips{position:static;margin-top:10px;box-shadow:none;}
+  .action-row{display:grid;grid-template-columns:1fr;}.action-row .btn-secondary{width:100%;}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
+</style>
 </head>
 <body>
 
@@ -369,6 +590,7 @@ body{background:var(--color-bg);}
     <p class="hero-subtitle" id="hero-subtitle">A structured decision rehearsal for founders weighing runway, customer proof, and the cost of waiting.</p>
     <div class="hero-agents" id="hero-agents" aria-label="Council roles"></div>
     <div class="input-section">
+      <p class="template-label">Case template</p>
       <div class="decision-track-picker" role="group" aria-label="Choose a decision track">
         <button class="decision-track active" type="button" data-track="founder" aria-pressed="true"><strong>Founder</strong><small>Featured guided track</small></button>
         <button class="decision-track" type="button" data-track="career" aria-pressed="false"><strong>Career</strong><small>Role, offer, or direction</small></button>
@@ -448,7 +670,7 @@ body{background:var(--color-bg);}
           <button class="scenario-chip" type="button" data-example="open">Open decision example</button>
           </div>
         </details>
-        <button class="btn-main" id="deliberate-btn" type="button">Run the council</button>
+        <button class="btn-main" id="deliberate-btn" type="button">Start review</button>
       </div>
       <details class="safety-details"><summary>Privacy &amp; limits</summary><p class="safety-note" id="safety-note">The AI Diplomat helps structure a founder decision; it is not financial, legal, tax, medical, investment, or emergency advice. A Live Full Council uses nine GPT-5.6 calls and may take a few minutes. Validate facts and material commitments with qualified professionals.</p></details>
     </div>
@@ -458,15 +680,10 @@ body{background:var(--color-bg);}
 
   <section class="workspace-panel" id="workspace-panel" aria-labelledby="workspace-panel-title">
     <h2 class="sr-only" id="workspace-panel-title">Decision workspace</h2>
-    <div class="workspace-empty" id="workspace-empty">
-      <p class="workspace-kicker">Decision workspace</p>
-      <h2 id="workspace-title">Bring the decision into focus.</h2>
-      <p>State the choice plainly, add the facts that could change it, then let four independent perspectives test the reasoning.</p>
-      <div class="workspace-steps" aria-label="How it works"><span>1&nbsp; Describe</span><span>2&nbsp; Add context</span><span>3&nbsp; Review</span></div>
-    </div>
+    <div class="workspace-empty" id="workspace-empty" aria-hidden="true"></div>
     <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     <section class="debate-section" id="debate-section" aria-label="Decision perspectives">
-  <h2 class="section-label">Perspectives</h2>
+  <h2 class="section-label">Council record</h2>
   <div class="agents-grid" id="agents-grid"></div>
   <details class="debate-log" id="debate-log">
     <summary class="log-head">
@@ -555,12 +772,12 @@ const TRACKS={
     label:'Open Decision',slug:'decision',badge:'The AI Diplomat · Open Decision Council',heroTitle:'Make a hard choice<br><em>more testable.</em>',subtitle:'Use independent perspectives, rebuttal, and a mediated brief to turn a consequential choice into a clearer next move.',contextNote:'Open Decision is for non-emergency choices where you can describe the trade-off. It does not verify external facts or replace expert advice.',decisionLabel:'The decision you are weighing',decisionPlaceholder:'e.g. Should I commit to a part-time degree, or keep evenings free for independent projects?',decisionHelp:'Name the paths and constraints, then identify the evidence that would change your mind. Avoid private identifiers and high-risk emergency situations.',mediatorTitle:'Decision Brief',mediatorSub:'Values, evidence, and the smallest responsible next step',experimentLabel:'Next evidence action',guardrailLabel:'Reversibility guardrail',transcriptContext:'DECISION CONTEXT',safety:'The AI Diplomat helps structure a consequential choice; it is not financial, legal, tax, medical, investment, emergency, or crisis advice. It cannot verify external facts. Validate material commitments with qualified people and primary sources.',demoCopy:'Demo Mode runs a clearly scripted Open Decision walkthrough. Live GPT-5.6 sends your decision through this app’s server relay; no OpenAI API key is entered or stored in your browser.',firstFocus:'Focus on values, irreversibility, evidence, downstream impact, and the smallest responsible next move.',rebuttalFocus:'What did the others miss about values, trade-offs, downside, or a reversible next step?',how:[['Name the trade-off','Describe the competing paths, the people affected, and what you cannot compromise.'],['Use distinct lenses','Four perspectives challenge premature certainty, surface upside, map downside, and question bias.'],['Correct assumptions','Edit what the first round got wrong before the council rebuttal.'],['Choose a testable step','Leave with an evidence action, a guardrail, and a clear decision rule.']],generic:{frameTitle:'Decision Evidence Frame',optionsLabel:'Options you are weighing',optionsPlaceholder:'e.g. commit now, run a short test, or preserve the option',valuesLabel:'What matters most?',constraintsLabel:'Non-negotiables or relevant constraints',evidenceLabel:'Facts to verify or evidence you have',nextStepLabel:'Smallest reversible next step'},fallbackAlternatives:[{title:'Commit now',tradeoff:'Move decisively while accepting the uncertainty you have not yet tested.',recommended:false},{title:'Run a bounded experiment',tradeoff:'Gather the decisive evidence while keeping the choice reversible.',recommended:true},{title:'Preserve the option',tradeoff:'Protect flexibility while accepting slower progress and lingering uncertainty.',recommended:false}],fallbackRule:'If the next evidence action confirms your non-negotiables by the check-in and the guardrail remains intact, commit; otherwise preserve the option or revise the plan.'}
 };
 const AGENT_PROFILES=[
-  {id:'devil',name:"Devil's Advocate",emoji:'D',color:'var(--agent-devil)',roles:{founder:'Runway skeptic',career:'Tests exit costs and opportunity cost',relocation:'Tests the dream against logistics',open:'Challenges premature certainty'},lenses:{founder:'Challenge cash-runway assumptions, missed income, hidden financial exposure, and irreversibility.',career:'Challenge rosy assumptions about role scope, compensation, opportunity cost, and fallback paths.',relocation:'Challenge romanticized assumptions about logistics, support, cost, and reversibility.',open:'Challenge wishful thinking, hidden costs, timing assumptions, and irreversible commitments.'}},
-  {id:'opt',name:'Optimist',emoji:'O',color:'var(--agent-opt)',roles:{founder:'Finds the highest-leverage path',career:'Finds compounding opportunities',relocation:'Finds a low-regret upside path',open:'Finds upside and reversible experiments'},lenses:{founder:'Focus on customer learning, speed to proof, distribution leverage, and staged upside without romanticizing quitting.',career:'Find the compounding upside, learning, relationships, and staged ways to pursue the opportunity.',relocation:'Find upside while protecting belonging, adaptability, and a low-regret route to the new place.',open:'Find the upside, agency, optionality, and a constructive experiment that creates learning.'}},
-  {id:'risk',name:'Risk Analyst',emoji:'R',color:'var(--agent-risk)',roles:{founder:'Maps downside and stop-losses',career:'Maps money, timing, and fallback',relocation:'Maps work, housing, support, and gaps',open:'Maps downside and reversibility'},lenses:{founder:'Assess burn, runway, customer concentration, execution risk, recoverability, leading indicators, and stop-losses.',career:'Assess downside, timing, commitments, financial exposure, and the practical fallback if the move disappoints.',relocation:'Assess work, housing, support, timing, and verification gaps; do not invent facts about visas, tax, or law.',open:'Assess downside, reversibility, affected people, decision timing, and what evidence would lower the risk.'}},
-  {id:'psych',name:'Psychologist',emoji:'H',color:'var(--agent-psych)',roles:{founder:'Protects motivation and judgment',career:'Separates values from fear and status',relocation:'Surfaces belonging, identity, and adjustment',open:'Surfaces values, pressure, and bias'},lenses:{founder:'Explore identity, avoidance versus agency, cognitive bias, stress, and resilience without diagnosing.',career:'Explore values, identity, fear, status pressure, energy, and the stories attached to each path without diagnosing.',relocation:'Explore belonging, identity, support, adaptation stress, and whether the wish to move is escaping or approaching something.',open:'Explore values, social pressure, avoidance, identity, and cognitive bias without diagnosing.'}}
+  {id:'devil',name:'Countercase',emoji:'01',color:'var(--agent-devil)',roles:{founder:'Challenges the case for quitting',career:'Tests exit costs and opportunity cost',relocation:'Tests the dream against logistics',open:'Challenges premature certainty'},lenses:{founder:'Challenge cash-runway assumptions, missed income, hidden financial exposure, and irreversibility.',career:'Challenge rosy assumptions about role scope, compensation, opportunity cost, and fallback paths.',relocation:'Challenge romanticized assumptions about logistics, support, cost, and reversibility.',open:'Challenge wishful thinking, hidden costs, timing assumptions, and irreversible commitments.'}},
+  {id:'opt',name:'Opportunity',emoji:'02',color:'var(--agent-opt)',roles:{founder:'Finds the highest-leverage path',career:'Finds compounding opportunities',relocation:'Finds a low-regret upside path',open:'Finds upside and reversible experiments'},lenses:{founder:'Focus on customer learning, speed to proof, distribution leverage, and staged upside without romanticizing quitting.',career:'Find the compounding upside, learning, relationships, and staged ways to pursue the opportunity.',relocation:'Find upside while protecting belonging, adaptability, and a low-regret route to the new place.',open:'Find the upside, agency, optionality, and a constructive experiment that creates learning.'}},
+  {id:'risk',name:'Risk',emoji:'03',color:'var(--agent-risk)',roles:{founder:'Maps downside and stop-losses',career:'Maps money, timing, and fallback',relocation:'Maps work, housing, support, and gaps',open:'Maps downside and reversibility'},lenses:{founder:'Assess burn, runway, customer concentration, execution risk, recoverability, leading indicators, and stop-losses.',career:'Assess downside, timing, commitments, financial exposure, and the practical fallback if the move disappoints.',relocation:'Assess work, housing, support, timing, and verification gaps; do not invent facts about visas, tax, or law.',open:'Assess downside, reversibility, affected people, decision timing, and what evidence would lower the risk.'}},
+  {id:'psych',name:'Human factor',emoji:'04',color:'var(--agent-psych)',roles:{founder:'Protects motivation and judgment',career:'Separates values from fear and status',relocation:'Surfaces belonging, identity, and adjustment',open:'Surfaces values, pressure, and bias'},lenses:{founder:'Explore identity, avoidance versus agency, cognitive bias, stress, and resilience without diagnosing.',career:'Explore values, identity, fear, status pressure, energy, and the stories attached to each path without diagnosing.',relocation:'Explore belonging, identity, support, adaptation stress, and whether the wish to move is escaping or approaching something.',open:'Explore values, social pressure, avoidance, identity, and cognitive bias without diagnosing.'}}
 ];
-const MED={name:'The Mediator',emoji:'M',color:'var(--agent-med)'};
+const MED={name:'Decision Brief',emoji:'05',color:'var(--agent-med)'};
 const WORKED_EXAMPLES={
   founder:{decision:'I have €21,000 in savings, €3,500 of monthly personal burn, and one interested B2B prospect. Should I quit my job now to build full-time, or keep my income until I secure a paid pilot?',cash:'21000',burn:'3500',revenue:'0',pilotDays:'30',evidence:'Interested prospect',responsibilities:'Rent and a shared household budget',assumption:'The prospect can approve a paid pilot within 30 days.',success:'Secure one paid pilot with a start date and written success criteria.',checkInDays:30},
   career:{decision:'I have a stable product-manager role in Accra and an offer for a one-year role at an early-stage company in Nairobi. It pays 20% more but requires relocation. Should I accept, negotiate a trial, or stay while I look for another role?',options:'Stay in my current role, accept the Nairobi offer, or negotiate a trial or return option.',deadlineDays:21,values:'Growth, financial stability, meaningful scope, and proximity to my support network.',people:'My partner and family support network.',constraints:'I need reliable healthcare coverage and cannot take on new debt.',reversibility:'Moderately reversible',evidence:'I have a written offer, but I still need to verify role scope, benefits, team support, and the practical fallback.',assumption:'The role offers meaningful ownership and support, not only a more impressive title.',nextStep:'Speak with three future teammates and request written scope, benefits, and a trial or return conversation.'},
@@ -629,7 +846,7 @@ function parseAgentRecord(agent,text){const get=(label)=>{const match=text.match
 function extractCouncilAssumptions(){const seen=new Set();return AGENTS.map(agent=>state.agentRecords[agent.id]?.assumption).filter(Boolean).filter(item=>{const key=item.toLowerCase().replace(/[^a-z0-9]/g,'');if(seen.has(key))return false;seen.add(key);return true;}).slice(0,5);}
 
 function renderHeroAgents(){const wrap=el('hero-agents');wrap.replaceChildren();AGENTS.forEach(agent=>{const chip=createNode('div','agent-chip');const dot=createNode('div','agent-dot');dot.style.background=agent.color;chip.append(dot,createNode('span','',agent.name));wrap.append(chip);});const mediator=createNode('div','agent-chip');const mediatorDot=createNode('div','agent-dot');mediatorDot.style.background=MED.color;mediator.append(mediatorDot,createNode('span','',MED.name));wrap.append(mediator);}
-function renderTrackCopy(){const track=activeTrack();document.title='The AI Diplomat — '+(state.decisionTrack==='open'?'Multi-Agent Decision Engine':track.label);el('hero-badge').replaceChildren(createNode('div','badge-dot'),document.createTextNode(track.badge));el('hero-title').innerHTML=track.heroTitle;el('hero-subtitle').textContent=track.subtitle;el('track-context').textContent=track.contextNote;el('decision-label').textContent=track.decisionLabel;el('decision-input').placeholder=track.decisionPlaceholder;el('decision-help').textContent=track.decisionHelp;el('safety-note').textContent=track.safety;el('med-title').textContent=track.mediatorTitle;el('med-sub').textContent=track.mediatorSub;el('key-modal-copy').textContent='Example mode runs a fixed '+track.label+' walkthrough. Live GPT-5.6 sends your decision through this app’s server relay; no OpenAI API key is entered or stored in your browser.';el('how-title').textContent='How '+track.label+' works';track.how.forEach((card,index)=>{el('how-card-'+(index+1)+'-title').textContent=card[0];el('how-card-'+(index+1)+'-desc').textContent=card[1];});if(state.decisionTrack!=='founder'){const generic=track.generic;el('generic-options-label').textContent=generic.optionsLabel;el('generic-options').placeholder=generic.optionsPlaceholder;el('generic-values-label').textContent=generic.valuesLabel;el('generic-constraints-label').textContent=generic.constraintsLabel;el('generic-evidence-label').textContent=generic.evidenceLabel;el('generic-next-step-label').textContent=generic.nextStepLabel;el('general-frame-title').textContent='Decision snapshot';}document.querySelectorAll('[data-track]').forEach(button=>{const active=button.dataset.track===state.decisionTrack;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});}
+function renderTrackCopy(){const track=activeTrack();document.title='The AI Diplomat — Decision Review';el('hero-badge').textContent='The AI Diplomat · Decision review';el('hero-title').innerHTML='Make the decision<br><em>before it makes itself.</em>';el('hero-subtitle').textContent='A private second hearing for choices that deserve more than a quick answer.';el('track-context').textContent=track.label+' template · The council adapts its questions to this kind of decision; it does not verify external facts.';el('decision-label').textContent='What are you deciding?';el('decision-input').placeholder=track.decisionPlaceholder;el('decision-help').textContent='State the choice in your own words. Use approximate figures and avoid names, account details, or confidential information.';el('safety-note').textContent=track.safety;el('med-title').textContent='Decision Brief';el('med-sub').textContent=track.label+' · council synthesis';el('key-modal-copy').textContent='Example mode runs a fixed '+track.label+' walkthrough. Live GPT-5.6 sends your decision through this app’s server relay; no OpenAI API key is entered or stored in your browser.';el('how-title').textContent='How '+track.label+' works';track.how.forEach((card,index)=>{el('how-card-'+(index+1)+'-title').textContent=card[0];el('how-card-'+(index+1)+'-desc').textContent=card[1];});if(state.decisionTrack!=='founder'){const generic=track.generic;el('generic-options-label').textContent=generic.optionsLabel;el('generic-options').placeholder=generic.optionsPlaceholder;el('generic-values-label').textContent=generic.valuesLabel;el('generic-constraints-label').textContent=generic.constraintsLabel;el('generic-evidence-label').textContent=generic.evidenceLabel;el('generic-next-step-label').textContent=generic.nextStepLabel;el('general-frame-title').textContent='Decision snapshot';}document.querySelectorAll('[data-track]').forEach(button=>{const active=button.dataset.track===state.decisionTrack;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});}
 function resetTrackResults(){state.decision='';state.context={};state.assumptions=[];state.agentRecords={};state.round1={};state.round2={};state.verdict=null;state.logCount=0;el('log-body').replaceChildren();el('log-count').textContent='0 exchanges';el('mediator-wrap').classList.remove('visible');el('download-transcript').hidden=true;el('calendar-checkpoint').hidden=true;el('retry-live').hidden=true;el('debate-section').classList.remove('visible');el('debate-log').classList.remove('visible');el('progress-bar').classList.remove('visible');el('workspace-panel').classList.remove('has-activity');el('workspace-panel').setAttribute('aria-busy','false');clearStatus();}
 function clearTrackInputs(){[...FOUNDER_INPUT_IDS,...GENERAL_INPUT_IDS].forEach(id=>{el(id).value='';});el('reversibility').selectedIndex=0;el('generic-reversibility').selectedIndex=0;}
 function captureTrackDraft(trackId){const ids=trackId==='founder'?FOUNDER_INPUT_IDS:GENERAL_INPUT_IDS;return {decision:el('decision-input').value,fields:Object.fromEntries(ids.map(id=>[id,el(id).value]))};}
@@ -638,13 +855,13 @@ function animateTrackChange(){const rail=el('decision-rail');rail.classList.remo
 function setDecisionTrack(trackId){if(!TRACKS[trackId])return;if(state.running){setStatus('Finish or cancel the current deliberation before changing decision tracks.','info');return;}if(AGENTS.length)state.drafts[state.decisionTrack]=captureTrackDraft(state.decisionTrack);state.decisionTrack=trackId;state.demoFixtureLoaded=null;AGENTS=buildAgents(trackId);restoreTrackDraft(trackId);el('founder-context').hidden=trackId!=='founder';el('general-context').hidden=trackId==='founder';renderTrackCopy();renderHeroAgents();renderAgents();resetTrackResults();setMode(state.mode);if(trackId==='founder')updateReadinessGate();else updateGeneralFrame();animateTrackChange();}
 
 function createNode(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;}
-function renderAgents(){const grid=el('agents-grid');grid.replaceChildren();AGENTS.forEach(agent=>{const panel=createNode('article','agent-panel');panel.id='panel-'+agent.id;panel.style.setProperty('--agent-color',agent.color);const head=createNode('div','panel-head');head.append(createNode('div','agent-avatar',agent.emoji));const title=createNode('div');title.append(createNode('div','agent-name',agent.name),createNode('div','agent-role',agent.role));const status=createNode('div','agent-status');status.append(createNode('div','status-dot'),createNode('span','', 'Waiting'));status.lastChild.id='st-'+agent.id;head.append(title,status);const body=createNode('div','panel-body');const message=createNode('p','agent-msg empty','Waiting for the question...');message.id='msg-'+agent.id;body.append(message);panel.append(head,body);grid.append(panel);});}
+function renderAgents(){const grid=el('agents-grid');grid.replaceChildren();AGENTS.forEach(agent=>{const panel=createNode('article','agent-panel');panel.id='panel-'+agent.id;panel.style.setProperty('--agent-color',agent.color);panel.tabIndex=0;panel.setAttribute('role','button');panel.setAttribute('aria-label','Open '+agent.name+' council record');panel.setAttribute('aria-expanded','false');const head=createNode('div','panel-head');head.append(createNode('div','agent-avatar',agent.emoji));const title=createNode('div');title.append(createNode('div','agent-name',agent.name),createNode('div','agent-role',agent.role));const status=createNode('div','agent-status');status.append(createNode('div','status-dot'),createNode('span','', 'Waiting'));status.lastChild.id='st-'+agent.id;head.append(title,status);const body=createNode('div','panel-body');const message=createNode('p','agent-msg empty','Waiting for the question...');message.id='msg-'+agent.id;body.append(message);const toggle=()=>{if(!panel.classList.contains('complete'))return;const expanded=panel.classList.toggle('expanded');panel.setAttribute('aria-expanded',String(expanded));};panel.addEventListener('click',toggle);panel.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle();}});panel.append(head,body);grid.append(panel);});}
 function agentPosture(value){const posture=typeof value==='object'?value?.posture:value;return ['Cautious','Conditional','Supportive'].includes(posture)?posture:'Not stated';}
 function postureWidth(value){const posture=agentPosture(value);return posture==='Cautious'?28:posture==='Conditional'?60:posture==='Supportive'?88:0;}
 function renderAgentFacts(agent,record){const body=el('msg-'+agent.id).parentElement;body.querySelector('.agent-facts')?.remove();const facts=createNode('div','agent-facts');[['Posture',agentPosture(record)],['Assumption',record.assumption],['Evidence needed',record.evidence],['Challenge',record.challenge]].forEach(([label,value])=>{const fact=createNode('div','agent-fact');fact.append(createNode('strong','',label),createNode('span','',value));facts.append(fact);});body.append(facts);}
 function addRoundLabel(agentId){const message=el('msg-'+agentId);const label=createNode('div','round-label round-two','Challenge assumptions');message.parentElement.append(label);const rebuttal=createNode('p','agent-msg empty','Waiting for response...');rebuttal.id='msg-'+agentId+'-r2';message.parentElement.append(rebuttal);return rebuttal;}
 function addLog(agent,text,round){const body=el('log-body');const entry=createNode('div','log-entry');const avatar=createNode('div','log-av',agent.emoji);avatar.style.border='1px solid '+agent.color;const content=createNode('div','');content.style.flex='1';const meta=createNode('div','log-meta');const name=createNode('span','log-name',agent.name+(round?' · Round '+round:''));name.style.color=agent.color;meta.append(name,createNode('span','log-time',new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})));content.append(meta,createNode('div','log-text',text));entry.append(avatar,content);body.append(entry);body.scrollTop=body.scrollHeight;state.logCount+=1;el('log-count').textContent=state.logCount+' exchange'+(state.logCount===1?'':'s');}
-function setAgentState(agentId,status,speaking){const panel=el('panel-'+agentId);panel.classList.toggle('speaking',speaking);el('st-'+agentId).textContent=status;}
+function setAgentState(agentId,status,speaking){const panel=el('panel-'+agentId);panel.classList.toggle('speaking',speaking);panel.classList.toggle('complete',status==='Done');if(status==='Done'){panel.classList.remove('expanded');panel.setAttribute('aria-expanded','false');}el('st-'+agentId).textContent=status;}
 async function typeText(node,text){node.classList.remove('empty');node.classList.add('typing');node.textContent='';const chunks=text.match(/\S+\s*/g)||[text];const batchSize=Math.max(1,Math.ceil(chunks.length/16));for(let index=0;index<chunks.length;index+=batchSize){ensureActive();node.textContent+=chunks.slice(index,index+batchSize).join('');await sleep(18);}node.classList.remove('typing');}
 function createTokenWriter(node){let buffer='';let frame=0;const flush=()=>{if(buffer){node.textContent+=buffer;buffer='';}frame=0;};const write=token=>{buffer+=token;if(!frame)frame=requestAnimationFrame(flush);};write.flush=()=>{if(frame)cancelAnimationFrame(frame);flush();};return write;}
 function showModal(id,focusTarget){state.lastFocus=document.activeElement;state.activeModal=el(id);state.activeModal.classList.add('visible');state.activeModal.setAttribute('aria-hidden','false');setTimeout(()=>el(focusTarget)?.focus(),0);}
@@ -750,9 +967,9 @@ function councilPattern(){const postures=AGENTS.map(agent=>agentPosture(state.ag
 function decisionRule(verdict){return typeof verdict.decisionRule==='string'&&verdict.decisionRule.trim()?verdict.decisionRule.trim():activeTrack().fallbackRule;}
 function renderVerdict(verdict){const track=activeTrack();verdict.decisionRule=decisionRule(verdict);state.verdict=verdict;el('verdict-summary').textContent=verdict.summary;const list=el('verdict-list');list.replaceChildren();verdict.points.slice(0,5).forEach(point=>{const item=createNode('li','verdict-item');item.append(createNode('span','verdict-arrow','→'),createNode('span','',point));list.append(item);});const recommendation=el('rec-box');recommendation.replaceChildren();if(verdict.recommendation)recommendation.append(createNode('div','rec-box',verdict.recommendation));const pattern=councilPattern();el('conf-pct').textContent=pattern;el('confidence-note').textContent='This describes the perspectives’ stated posture, not a probability of success.';el('verdict-conditions').textContent=verdict.conditions?'What would change this: '+verdict.conditions:'';const brief=el('brief-grid');brief.replaceChildren();[[track.experimentLabel,verdict.experiment||(state.decisionTrack==='founder'?'Define a paid customer test that produces evidence before committing.':'Define an evidence action that resolves the central uncertainty before committing.')],[track.guardrailLabel,verdict.stopLoss||'Set a time, commitment, or downside boundary that tells you when to pause or reverse.'],['Decision rule',verdict.decisionRule]].forEach(([title,text])=>{const card=createNode('article','brief-card');card.append(createNode('h3','',title),createNode('p','',text));brief.append(card);});const map=el('council-map');map.replaceChildren();const head=createNode('div','map-head');head.append(createNode('h3','', 'Perspective posture'),createNode('span','', 'Agent-stated'));map.append(head);AGENTS.forEach(agent=>{const record=state.agentRecords[agent.id]||defaultRecord(agent,state.round1[agent.id]||'');const row=createNode('div','map-row');const label=createNode('span','',agent.name);const mapTrack=createNode('div','map-track');const fill=createNode('div','map-fill');fill.style.width=postureWidth(record)+'%';fill.style.background=agent.color;mapTrack.append(fill);row.append(label,mapTrack,createNode('span','map-value',agentPosture(record)));row.title='Evidence needed: '+record.evidence+'\nChallenge: '+record.challenge;map.append(row);});const paths=el('path-options');paths.replaceChildren();(Array.isArray(verdict.alternatives)&&verdict.alternatives.length===3?verdict.alternatives:fallbackAlternatives()).forEach(path=>{const card=createNode('article','path-card'+(path.recommended?' recommended':''));card.append(createNode('h3','',path.title),createNode('p','',path.tradeoff));paths.append(card);});el('mediator-wrap').classList.add('visible');el('download-transcript').hidden=false;el('calendar-checkpoint').hidden=false;showWorkspace('result');}
 function resetUI(){renderAgents();state.logCount=0;el('log-body').replaceChildren();el('log-count').textContent='0 exchanges';el('conf-pct').textContent='—';el('confidence-note').textContent='';el('download-transcript').hidden=true;el('calendar-checkpoint').hidden=true;el('retry-live').hidden=true;el('mediator-wrap').classList.remove('visible');document.querySelector('.brief-details').open=false;el('debate-log').open=false;el('debate-section').classList.add('visible');el('debate-log').classList.add('visible');el('progress-bar').classList.add('visible');el('workspace-panel').classList.add('has-activity');el('workspace-panel').setAttribute('aria-busy','true');}
-function setButton(running){const button=el('deliberate-btn');button.disabled=false;button.textContent=running?'Stop review':'Run the council';}
+function setButton(running){const button=el('deliberate-btn');button.disabled=false;button.textContent=running?'Stop review':'Start review';}
 function motionBehavior(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';}
-function showWorkspace(view='top'){const workspace=el('workspace-panel');const desktop=window.matchMedia('(min-width: 1024px)').matches;if(desktop){const target=view==='result'?el('mediator-wrap').offsetTop-12:0;workspace.scrollTo({top:Math.max(0,target),behavior:motionBehavior()});return;}const target=view==='result'?el('mediator-wrap'):el('debate-section');target.scrollIntoView({behavior:motionBehavior(),block:'start'});}
+function showWorkspace(view='top'){const target=view==='result'?el('mediator-wrap'):el('debate-section');target.scrollIntoView({behavior:motionBehavior(),block:'start'});}
 function openModal(){showModal('key-modal','use-live');}
 function closeModal(){hideModal('key-modal');}
 function finishRun(){state.running=false;state.controller=null;setButton(false);el('progress-bar').classList.remove('visible');el('workspace-panel').setAttribute('aria-busy','false');}
