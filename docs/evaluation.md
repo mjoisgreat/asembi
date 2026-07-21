@@ -1,6 +1,10 @@
-# Evaluation and founder usability study
+# Evaluation and usability study
 
-This is a protocol, not a results report. Do not fill in conclusions, scores, or founder quotes until the study has actually been run. The purpose is to compare the quality of a structured council brief with a strong single-model answer—not to claim that either system can predict a startup outcome.
+This is a protocol, not a results report. Do not fill in conclusions, scores, or participant quotes until the study has actually been run. The purpose is to compare the quality of a structured council brief with a strong single-model answer—not to claim that either system can predict an outcome.
+
+## Scope: Founder Runway first
+
+The controlled protocol below evaluates **Founder Runway**, the app’s fully guided hero track. It is intentionally not presented as evidence that Career Move, Relocation, or Open Decision support is equally effective. Those tracks need their own cases, participant recruitment, and criteria before any cross-domain claim is made.
 
 ## Research question
 
