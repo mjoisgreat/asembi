@@ -5,6 +5,7 @@ const MAX_MESSAGE_CHARS = 12_000;
 const MAX_TOTAL_MESSAGE_CHARS = 28_000;
 const MAX_COMPLETION_TOKENS = 1_200;
 const ALLOWED_ROLES = new Set(['system', 'user', 'assistant']);
+const REASONING_EFFORT = 'none';
 
 function sendJson(res, statusCode, message) {
   if (res.writableEnded || res.destroyed) return;
@@ -72,6 +73,9 @@ function sanitizeRequest(input) {
     stream: true,
     n: 1,
     store: false,
+    // This app favors concise, visible deliberation over hidden reasoning.
+    // Pinning the effort also prevents clients from raising token usage.
+    reasoning_effort: REASONING_EFFORT,
   };
 
   const tokenLimit = validTokenLimit(input.max_completion_tokens)
