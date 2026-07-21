@@ -563,6 +563,13 @@ function parseMediatorVerdict(raw){
   const end=cleaned.lastIndexOf('}');
   return JSON.parse(start>=0&&end>=start?cleaned.slice(start,end+1):cleaned);
 }
+function isCompleteMediatorVerdict(verdict){
+  const hasText=value=>typeof value==='string'&&value.trim().length>0;
+  return Boolean(verdict)&&['summary','recommendation','conditions','experiment','stopLoss','decisionRule'].every(key=>hasText(verdict[key]))
+    &&Array.isArray(verdict.points)&&verdict.points.length===3&&verdict.points.every(hasText)
+    &&Array.isArray(verdict.alternatives)&&verdict.alternatives.length===3
+    &&verdict.alternatives.every(item=>item&&hasText(item.title)&&hasText(item.tradeoff)&&typeof item.recommended==='boolean');
+}
 async function getMediator(){
   const debate=AGENTS.map(agent=>agent.name+' Round 1: '+state.round1[agent.id]+'\n'+agent.name+' Round 2: '+state.round2[agent.id]).join('\n\n');
   if(state.mode==='demo'){
@@ -576,12 +583,15 @@ async function getMediator(){
   let verdict;
   try{
     verdict=parseMediatorVerdict(raw);
+    if(!isCompleteMediatorVerdict(verdict))throw new Error('Incomplete mediator verdict');
   }catch{
     raw=await streamGPT(system+' Keep the entire JSON response under 500 tokens.',user,()=>{},{maxCompletionTokens:1200,responseFormat:{type:'json_object'}});
-    try{verdict=parseMediatorVerdict(raw);}
+    try{
+      verdict=parseMediatorVerdict(raw);
+      if(!isCompleteMediatorVerdict(verdict))throw new Error('Incomplete mediator verdict');
+    }
     catch{throw new Error('The mediator response was cut off before it could return a verdict. Please retry.');}
   }
-  if(!verdict.summary||!verdict.recommendation||!Array.isArray(verdict.points))throw new Error('Mediator returned an incomplete verdict. Please retry.');
   return verdict;
 }
 function fallbackAlternatives(){return [{title:'Quit now',tradeoff:'Maximize focused build time while accepting the current cash and demand uncertainty.',recommended:false},{title:'Run a validation sprint',tradeoff:'Test paid demand before committing to a full-time leap.',recommended:true},{title:'Keep income while testing',tradeoff:'Preserve optionality while accepting slower learning velocity.',recommended:false}];}
