@@ -2,66 +2,96 @@
 
 **Should you quit to build the company now—or earn the right to?**
 
-The AI Diplomat is a structured decision rehearsal for founders facing a high-stakes runway choice. Four specialist perspectives surface the trade-offs; a mediator turns their disagreement into a concrete customer-proof experiment, a stop-loss, and a check-in.
+The AI Diplomat is a focused decision rehearsal for founders deciding whether to leave income and build full-time. It turns a vague, high-stakes choice into a visible runway-and-proof gate, a structured council debate, and a conditional customer-validation plan.
+
+It does not predict whether a startup will succeed. It helps a founder make the next irreversible move smaller, testable, and easier to revisit.
 
 ## The founder moment it serves
 
-It is built for decisions such as:
+V1 is deliberately narrow:
 
-- Quit a job now or keep income while validating demand?
-- Build the product or sell a paid pilot first?
-- Bring on a cofounder or stay solo?
-- Extend runway, raise capital, pivot, or stop?
+> **Should I quit my job to build full-time, or preserve income until I have paid customer proof?**
 
-Rather than pretending to predict a founder’s future, it distinguishes evidence from hope and makes the next irreversible move smaller.
+The app asks for the facts that materially change that decision:
+
+- Cash available, personal burn, and committed monthly revenue
+- Expected time to a paid pilot
+- Customer-evidence stage
+- Financial responsibilities and a check-in date
+- The assumption most likely to break the plan
+- A 30-day proof-of-demand threshold
 
 ## What makes it different
 
-- Inputs are founder-specific: personal cash runway, monthly burn, financial responsibilities, customer evidence, and a 30-day proof-of-demand target.
-- Four agents debate from different lenses: runway protection, growth leverage, founder risk, and founder psychology.
-- Users correct the council’s assumptions between the independent round and the rebuttal round.
-- The Founder Decision Brief preserves disagreement, compares three paths, and produces a next customer proof, founder stop-loss, and calendar check-in.
-- Demo Mode works without an API key; Live Mode streams GPT-5.6 responses in real time.
+- **Founder Readiness Gate:** Calculates net burn and cash runway before any model call, then applies transparent planning gates such as “Protect income,” “Earn the right,” and “Proceed cautiously.”
+- **Evidence ledger:** Separates user-reported facts, assumptions, and proof still required. The council is instructed to treat all user text as data, not instructions.
+- **Useful disagreement:** Four focused perspectives debate runway protection, growth leverage, founder risk, and founder psychology. The app presents each as a plain-language posture—not a misleading probability.
+- **Human correction point:** The founder edits or removes the council’s assumptions between the independent first round and the rebuttal round.
+- **Decision loop:** The final brief includes a paid customer proof, a cash/time stop-loss, a clear if/then decision rule, a calendar check-in, and a downloadable transcript.
+- **Honest demo:** One scripted, internally consistent pre-quit example works without credentials. It is not presented as a live model result.
 
-## Run locally
+## Architecture
 
-Open `index.html` in a modern browser. No build step is required.
+~~~mermaid
+flowchart LR
+  F[Founder inputs] --> G[Deterministic Readiness Gate]
+  G --> L[Known / Assumed / Must prove ledger]
+  L --> C[Four GPT-5.6 council perspectives]
+  C --> H[Founder corrects assumptions]
+  H --> R[Cross-agent rebuttals]
+  R --> M[Mediator Decision Brief]
+  M --> O[Decision rule, export, calendar check-in]
+~~~
 
-Use Demo Mode to run without an API key. Live Mode uses GPT-5.6 through the Chat Completions API and keeps the user-provided key only in page memory.
+The UI remains a dependency-free index.html. Live requests go through api/deliberate.js, a Vercel server relay that keeps OPENAI_API_KEY off the client and streams Server-Sent Events to the browser. See the fuller [architecture notes](docs/architecture.md).
 
-## Evaluation protocol
+## Run it
 
-Compare a normal single-answer model response with an AI Diplomat Founder Decision Brief on these cases:
+### Demo mode
 
-1. Six months of savings and one interested—but unsigned—B2B lead.
-2. A stable job versus quitting to accelerate a product with no revenue.
-3. A potential cofounder requesting 40% equity in exchange for sales capability.
-4. Three interested prospects, but no commitment: paid pilot versus polished product.
-5. A founder with revenue but a shrinking runway who must decide whether to raise, cut costs, or pivot.
+Open index.html in a modern browser, or serve it locally:
 
-Score each output from 0–2 for:
+~~~bash
+python3 -m http.server 4173
+~~~
 
-- Cash runway and personal downside made explicit.
-- Confirmed customer evidence separated from speculation.
-- Material disagreement preserved rather than averaged away.
-- Missing evidence identified and made testable.
-- A paid validation experiment and explicit stop-loss included.
+Choose **Load worked example**, then **Deliberate → Use scripted Demo**. This shows the complete founder flow without an API key.
 
-Do not claim benchmark results until this protocol has been run and documented.
+### Live GPT-5.6 mode
 
-## Safety and privacy
+Live Mode requires a Vercel deployment and an OPENAI_API_KEY environment variable configured in Vercel. The browser never asks for, stores, or sends an API key.
 
-The AI Diplomat is a thinking partner, not financial, legal, tax, medical, investment, emergency, or crisis advice. Live Mode sends the user’s decision text to OpenAI. Avoid sensitive identifiers and verify material facts with qualified professionals.
+1. Import or deploy this repository to Vercel.
+2. Add OPENAI_API_KEY in the Vercel project’s Environment Variables for the intended environment.
+3. Redeploy.
+4. Choose **Use Live GPT-5.6** in the app.
 
-## Production note
+The relay only accepts the exact gpt-5.6 model identifier, bounds request sizes and token budgets, forces streaming and store: false, and does not intentionally log deliberation content.
 
-This Build Week prototype intentionally remains a single static HTML file. A public production deployment must move model calls behind a server-side relay with secrets management, authentication, rate limits, cost controls, monitoring, and a full privacy policy.
+## Evaluation and user learning
+
+This project intentionally does not claim benchmark or usability results that have not been run. The [evaluation protocol](docs/evaluation.md) contains:
+
+- Five founder cases for comparing the Decision Brief with a normal single-answer model response
+- A blind scoring rubric
+- A blank results sheet
+- A 3–5 founder usability-study guide
+
+Run the study, publish the actual results, and add only real participant quotes or outcomes before submission.
+
+## Trust boundaries
+
+- The AI Diplomat is a planning aid, not financial, legal, tax, investment, medical, emergency, or crisis advice.
+- It cannot verify salary, tax, visa, funding, market, or customer claims. Treat the ledger as user-reported information and validate material facts separately.
+- Scripted Demo stays in the browser. Live Mode sends decision text to the app’s relay and OpenAI; avoid personal identifiers, confidential customer data, and account information.
+- The included relay is a meaningful prototype boundary, not a complete public-scale security program. Authentication, durable rate limiting, budget controls, monitoring, incident response, and a reviewed privacy policy are still required before broad public launch.
 
 ## Suggested 90-second demo
 
-1. Select **Six months + one lead**.
-2. Add the founder’s burn, responsibilities, and a check-in date.
-3. Show the independent council perspectives and their evidence requirements.
-4. Correct an assumption at the checkpoint.
-5. Show the rebuttal and Founder Decision Brief recommending a paid-pilot experiment with a stop-loss.
-6. Download the brief or add the review date to a calendar.
+1. Open with the founder question: “Do I quit now—or earn the right first?”
+2. Load the worked example and point out the deterministic **Earn the right** gate: six months of runway is not the same as paid demand.
+3. Start the scripted council and show the four different evidence requirements.
+4. Pause at the assumption review and correct a claim if needed.
+5. Show the rebuttal, plain-language disagreement pattern, and final if/then decision rule.
+6. Export the brief and add the check-in to a calendar.
+7. Close with the distinction: this is not five chatbots voting; it is a repeatable decision loop that turns a founder’s hope into a test.
