@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <em>Asɛm bi</em> — an Akan/Twi phrase meaning “a certain matter,” “an issue,” or “a story.”
+</p>
+
+<p align="center">
   <a href="https://asembi.vercel.app/">Try the live app</a>
   ·
   <a href="https://youtu.be/yUob9fEebEE">Watch the demo</a>
