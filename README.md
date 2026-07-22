@@ -141,3 +141,7 @@ flutter build web --release --output ../public
 | [`api/deliberate.js`](api/deliberate.js) | Server-side GPT-5.6 streaming relay |
 | [`public`](public) | Generated production bundle deployed by Vercel |
 | [`flutter_app/assets/asembi-logo.png`](flutter_app/assets/asembi-logo.png) | Official Asembi mark |
+
+## License
+
+The source code is available under the [MIT License](LICENSE). The Asembi name, logo, and visual identity are not licensed for third-party branding use; see [Asembi brand use](TRADEMARKS.md).
